@@ -5,6 +5,13 @@ const service = axios.create({
   timerout: 5000
 })
 
+service.interceptors.request.use(config => {
+  config.headers.Authorization = localStorage.getItem('token')
+  return config
+}, error => {
+  return Promise.reject(new Error(error))
+})
+
 service.interceptors.response.use(response => {
   const { data, meta } = response.data
   if (meta.status === 200 || meta.status === 201) {
