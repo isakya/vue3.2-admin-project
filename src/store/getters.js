@@ -1,3 +1,5 @@
 export default {
-  token: state => state.app.token
+  token: state => {
+    return state.app.token
+  }
 }

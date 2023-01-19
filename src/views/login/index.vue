@@ -45,13 +45,13 @@ const rules = ref({
   ]
 })
 const formRef = ref(null)
-const handleLogin = async () => {
-  if (!formRef.value) return
-  await formRef.value.validate(async (valid, fields) => {
+const handleLogin = () => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
       store.dispatch('app/login', form.value)
     } else {
-      console.log('error submit!', fields)
+      console.log('error submit!')
+      return false
     }
   })
 }

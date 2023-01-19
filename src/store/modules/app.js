@@ -3,7 +3,7 @@ import router from '@/router'
 
 export default {
   namespaced: true,
-  stats: () => ({
+  state: () => ({
     token: localStorage.getItem('token') || ''
   }),
   mutations: {
