@@ -1,6 +1,6 @@
 <template>
   <el-menu active-text-color="#ffd04b" :background-color="variables.menuBg" class="el-menu-vertical-demo"
-    :default-active="defaultActive" text-color="#fff" router unique-opened>
+    :default-active="defaultActive" text-color="#fff" router unique-opened :collapse="!$store.getters.siderType">
     <el-sub-menu :index="item.id" v-for="(item, index) in menusList" :key="item.id">
       <template #title>
         <el-icon>
