@@ -1,5 +1,5 @@
 <template>
-  <div @click="handleFullScreen">
+  <div @click="handleFullScreen" id="screenFull">
     <svg-icon :icon="icon ? 'exit-fullscreen' : 'fullscreen'"></svg-icon>
   </div>
 </template>
@@ -23,7 +23,6 @@ onMounted(() => {
   screenfull.on('change', changeIcon)
 })
 onBeforeMount(() => {
-  console.log(456)
   screenfull.off('change')
 })
 
