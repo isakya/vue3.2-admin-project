@@ -1,7 +1,51 @@
 <template>
-  <div>users</div>
+  <el-card>
+    <el-row :gutter="20" class="header">
+      <el-col :span="7">
+        <el-input :placeholder="$t('table.placeholder')" clearable v-model="queryForm.query"></el-input>
+      </el-col>
+      <el-button type="primary" :icon="Search">{{ $t('table.search') }}</el-button>
+      <el-button type="primary">{{ $t('table.adduser') }}</el-button>
+    </el-row>
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column v-for="(item, index) in options" :key="index" :prop="item.prop"
+        :label="$t(`table.${item.label}`)" :width="item.width">
+        <template v-slot="{ row }" v-if="item.prop === 'mg_state'">
+          <el-switch v-model="row.mg_state" />
+        </template>
+        <template #default v-else-if="item.prop === 'action'">
+          <el-button type="primary" size="small">123</el-button>
+          <el-button type="warning" size="small">123</el-button>
+          <el-button type="danger" size="small">123</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-card>
 </template>
 
-<script></script>
+<script setup>
+import { Search } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { getUser } from '@/api/users'
+import { options } from './options.js'
+const queryForm = ref({
+  query: '',
+  pagenum: 1,
+  pagesize: 2
+})
 
-<style lang="scss" scoped></style>
+const tableData = ref([])
+const initGetUserList = async () => {
+  const res = await getUser(queryForm.value)
+  tableData.value = res.users
+  console.log(res)
+}
+initGetUserList()
+</script>
+
+<style lang="scss" scoped>
+.header {
+  padding-bottom: 16px;
+  box-sizing: border-box;
+}
+</style>
