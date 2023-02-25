@@ -8,15 +8,18 @@
       <el-button type="primary">{{ $t('table.adduser') }}</el-button>
     </el-row>
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column v-for="(item, index) in options" :key="index" :prop="item.prop"
-        :label="$t(`table.${item.label}`)" :width="item.width">
+      <el-table-column v-for="(item, index) in options" :key="index" :prop="item.prop" :label="$t(`table.${item.label}`)"
+        :width="item.width">
         <template v-slot="{ row }" v-if="item.prop === 'mg_state'">
           <el-switch v-model="row.mg_state" />
         </template>
+        <template v-slot="{ row }" v-else-if="item.prop === 'create_time'">
+          {{ $filters.filterTimes(row.create_time) }}
+        </template>
         <template #default v-else-if="item.prop === 'action'">
-          <el-button type="primary" size="small">123</el-button>
-          <el-button type="warning" size="small">123</el-button>
-          <el-button type="danger" size="small">123</el-button>
+          <el-button type="primary" size="small" :icon="Edit"></el-button>
+          <el-button type="warning" size="small" :icon="Setting"></el-button>
+          <el-button type="danger" size="small" :icon="Delete"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -24,7 +27,7 @@
 </template>
 
 <script setup>
-import { Search } from '@element-plus/icons-vue'
+import { Search, Edit, Setting, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { getUser } from '@/api/users'
 import { options } from './options.js'
