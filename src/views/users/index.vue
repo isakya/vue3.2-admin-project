@@ -11,7 +11,7 @@
       <el-table-column v-for="(item, index) in options" :key="index" :prop="item.prop" :label="$t(`table.${item.label}`)"
         :width="item.width">
         <template v-slot="{ row }" v-if="item.prop === 'mg_state'">
-          <el-switch v-model="row.mg_state" />
+          <el-switch v-model="row.mg_state" @click="changeState(row)" />
         </template>
         <template v-slot="{ row }" v-else-if="item.prop === 'create_time'">
           {{ $filters.filterTimes(row.create_time) }}
@@ -33,8 +33,11 @@
 <script setup>
 import { Search, Edit, Setting, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { getUser } from '@/api/users'
+import { getUser, changeUserState } from '@/api/users'
 import { options } from './options.js'
+import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const queryForm = ref({
   query: '',
   pagenum: 1,
@@ -59,6 +62,14 @@ const handleSizeChange = (pageSize) => {
 const handleCurrentChange = (pagenum) => {
   queryForm.value.pagenum = pagenum
   initGetUserList()
+}
+
+const changeState = async info => {
+  await changeUserState(info.id, info.mg_state)
+  ElMessage({
+    message: i18n.t('message.updateSuccess'),
+    type: 'success'
+  })
 }
 </script>
 
