@@ -18,6 +18,7 @@
         <el-input v-model="form.username" />
       </el-form-item>
       <el-form-item
+        v-if="dialogTitle === '添加用户'"
         label="密码"
         prop="password"
       >
@@ -54,37 +55,21 @@
 </template>
 
 <script setup>
-import { defineEmits, ref, defineProps } from 'vue'
-import { addUser } from '@/api/users.js'
+import { defineEmits, ref, defineProps, watch } from 'vue'
+import { addUser, editUser } from '@/api/users.js'
 import { ElMessage } from 'element-plus'
 import i18n from '@/i18n'
-defineProps({
+const props = defineProps({
   dialogTitle: {
     type: String,
     default: '',
     required: true
+  },
+  dialogTableValue: {
+    type: Object,
+    default: () => { }
   }
 })
-const emits = defineEmits(['update:modelValue', 'initUserList'])
-const handleClose = () => {
-  emits('update:modelValue', false)
-}
-const handleConfirm = () => {
-  formRef.value.validate(async (valid) => {
-    if (valid) {
-      await addUser(form.value)
-      ElMessage({
-        message: i18n.global.t('message.updateSuccess'),
-        type: 'success'
-      })
-      emits('initUserList')
-      handleClose()
-    } else {
-      console.log('error submit!!')
-      return false
-    }
-  })
-}
 const formRef = ref(null)
 const form = ref({
   username: '',
@@ -122,6 +107,33 @@ const rules = ref({
     }
   ]
 })
+
+watch(() => props.dialogTableValue, () => {
+  form.value = props.dialogTableValue
+  console.log(props.dialogTableValue)
+}, { deep: true, immediate: true })
+
+const emits = defineEmits(['update:modelValue', 'initUserList'])
+const handleClose = () => {
+  emits('update:modelValue', false)
+}
+const handleConfirm = () => {
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      props.dialogTitle === '添加用户' ? await addUser(form.value) : await editUser(form.value)
+      ElMessage({
+        message: i18n.global.t('message.updateSuccess'),
+        type: 'success'
+      })
+      emits('initUserList')
+      handleClose()
+    } else {
+      console.log('error submit!!')
+      return false
+    }
+  })
+}
+
 </script>
 
 <style lang="scss" scoped></style>

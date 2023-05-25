@@ -18,7 +18,7 @@
       >{{ $t('table.search') }}</el-button>
       <el-button
         type="primary"
-        @click="handleDialogValue"
+        @click="handleDialogValue()"
       >{{ $t('table.adduser') }}</el-button>
     </el-row>
     <el-table
@@ -48,13 +48,14 @@
           {{ $filters.filterTimes(row.create_time) }}
         </template>
         <template
-          #default
+          #default="{row}"
           v-else-if="item.prop === 'action'"
         >
           <el-button
             type="primary"
             size="small"
             :icon="Edit"
+            @click="handleDialogValue(row)"
           ></el-button>
           <el-button
             type="warning"
@@ -85,6 +86,7 @@
     :dialogTitle="dialogTitle"
     v-if="dialogVisible"
     @initUserList="initGetUserList"
+    :dialogTableValue="dialogTableValue"
   />
 </template>
 
@@ -95,6 +97,7 @@ import { getUser, changeUserState } from '@/api/users'
 import { options } from './options.js'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { isNull } from '@/utils/filters.js'
 import Dialog from './components/dialog.vue'
 const i18n = useI18n()
 const queryForm = ref({
@@ -107,6 +110,8 @@ const tableData = ref([])
 const total = ref(0)
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
+const dialogTableValue = ref({})
+
 const initGetUserList = async () => {
   const res = await getUser(queryForm.value)
   total.value = res.total
@@ -133,8 +138,14 @@ const changeState = async info => {
   })
 }
 
-const handleDialogValue = () => {
-  dialogTitle.value = '添加用户'
+const handleDialogValue = (row) => {
+  if (isNull(row)) {
+    dialogTitle.value = '添加用户'
+    dialogTableValue.value = {}
+  } else {
+    dialogTitle.value = '编辑用户'
+    dialogTableValue.value = JSON.parse(JSON.stringify(row))
+  }
   dialogVisible.value = true
 }
 </script>
