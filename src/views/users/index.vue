@@ -66,6 +66,7 @@
             type="danger"
             size="small"
             :icon="Delete"
+            @click="delUser(row)"
           ></el-button>
         </template>
       </el-table-column>
@@ -93,9 +94,9 @@
 <script setup>
 import { Search, Edit, Setting, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { getUser, changeUserState } from '@/api/users'
+import { getUser, changeUserState, deleteUser } from '@/api/users'
 import { options } from './options.js'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { isNull } from '@/utils/filters.js'
 import Dialog from './components/dialog.vue'
@@ -148,11 +149,41 @@ const handleDialogValue = (row) => {
   }
   dialogVisible.value = true
 }
+
+const delUser = (row) => {
+  ElMessageBox.confirm(i18n.t('dialog.deleteTitle'), 'Warning',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }
+  )
+    .then(async () => {
+      await deleteUser(row.id)
+      ElMessage({
+        type: 'success',
+        message: 'Delete completed'
+      })
+      initGetUserList()
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled'
+      })
+    })
+}
 </script>
 
 <style lang="scss" scoped>
 .header {
   padding-bottom: 16px;
   box-sizing: border-box;
+}
+
+::v-deep .el-pagination {
+  padding-top: 16px;
+  box-sizing: border-box;
+  text-align: right;
 }
 </style>
